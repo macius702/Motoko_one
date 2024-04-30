@@ -1,39 +1,46 @@
 import { html, render } from 'lit-html';
 import { m_backend } from 'declarations/m_backend';
-import logo from './logo2.svg';
 
 class App {
-  greeting = '';
+  question = '';
+  votes = [];
 
   constructor() {
-    this.#render();
+    this.#fetchData();
   }
 
-  #handleSubmit = async (e) => {
-    e.preventDefault();
-    const name = document.getElementById('name').value;
-    this.greeting = await m_backend.greet(name);
+  #fetchData = async () => {
+    this.question = await m_backend.getQuestion();
+    this.votes = await m_backend.getVotes();
+    this.#render();
+  };
+
+  #handleVote = async (entry) => {
+    this.votes = await m_backend.vote(entry);
+    this.#render();
+  };
+
+  #handleReset = async () => {
+    this.votes = await m_backend.resetVotes();
     this.#render();
   };
 
   #render() {
     let body = html`
       <main>
-        <img src="${logo}" alt="DFINITY logo" />
-        <br />
-        <br />
-        <form action="#">
-          <label for="name">Enter your name: &nbsp;</label>
-          <input id="name" alt="Name" type="text" />
-          <button type="submit">Click Me!</button>
-        </form>
-        <section id="greeting">${this.greeting}</section>
+        <h1>${this.question}</h1>
+        <ul>
+          ${this.votes.map(([entry, votes]) => html`
+            <li>
+              ${entry}: ${votes}
+              <button @click=${() => this.#handleVote(entry)}>Vote</button>
+            </li>
+          `)}
+        </ul>
+        <button @click=${this.#handleReset}>Reset Votes</button>
       </main>
     `;
     render(body, document.getElementById('root'));
-    document
-      .querySelector('form')
-      .addEventListener('submit', this.#handleSubmit);
   }
 }
 
