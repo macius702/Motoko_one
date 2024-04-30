@@ -27,18 +27,35 @@ class App {
 
   #render() {
     let body = html`
-      <main>
-        <h1>${this.question}</h1>
-        <ul>
+      <div class="container">
+        <div class="title-container">
+          <h1>Simple Voting Poll</h1>
+        </div>
+        <h2 id="question">${this.question}</h2>
+
+        <div class="form-container">
+          <form id="radioForm">
+            ${this.votes.map(([entry, votes]) => html`
+              <label>
+                <input type="radio" name="option" value="${entry}"> ${entry}
+              </label><br>
+            `)}
+            <button type="submit" @click=${(e) => {
+              e.preventDefault();
+              const selectedOption = document.querySelector('input[name="option"]:checked').value;
+              this.#handleVote(selectedOption);
+            }}>Vote</button>
+          </form>
+        </div>
+
+        <h2 id="results-title">Results</h2>
+        <div id="results">
           ${this.votes.map(([entry, votes]) => html`
-            <li>
-              ${entry}: ${votes}
-              <button @click=${() => this.#handleVote(entry)}>Vote</button>
-            </li>
+            <p>${entry}: ${votes}</p>
           `)}
-        </ul>
-        <button @click=${this.#handleReset}>Reset Votes</button>
-      </main>
+        </div>
+      </div>
+      <button id="reset" @click=${this.#handleReset}>Reset Poll</button>
     `;
     render(body, document.getElementById('root'));
   }
