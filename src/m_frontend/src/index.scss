@@ -68,9 +68,7 @@ button {
 
 button#reset {
   background-color: #dc3545;
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
+  position: relative; /* Change position to relative */
   margin: 10px 0; /* Add margin */
 }
 
@@ -85,4 +83,8 @@ button:hover {
   padding: 20px;
   border-radius: 5px;
   position: relative;
+}
+
+#log {
+  text-align: left;
 }
